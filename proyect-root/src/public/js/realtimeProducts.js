@@ -21,3 +21,8 @@ form.addEventListener("submit", (e) => {
   socket.emit("createProduct", product);
   form.reset();
 });
+
+
+
+
+
