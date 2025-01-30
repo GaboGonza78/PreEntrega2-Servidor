@@ -3,17 +3,21 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const { engine } = require("express-handlebars");
 const path = require("path");
-const productsRouter = require("./routes/products");
-const cartsRouter = require("./routes/carts");
+const productsRouter = require("./src/routes/products");
+const cartsRouter = require("./src/routes/carts");
 const fs = require("fs/promises");
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-app.engine("hbs", engine({ extname: ".hbs" }));
+app.engine("hbs", engine({ 
+    extname: ".hbs",
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "src", "views", "layouts")
+   }));
 app.set("view engine", "hbs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "src", "views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,7 +28,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 
 
-const productsFile = path.join(__dirname, "models/products.json");
+const productsFile = path.join(__dirname, "src/models/products.json");
 
 const getProducts = async () => {
   const data = await fs.readFile(productsFile, "utf-8");
@@ -81,7 +85,7 @@ io.on("connection", (socket) => {
 });
 
 
-const PORT = 8080;
+const PORT = 5000;
 httpServer.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
